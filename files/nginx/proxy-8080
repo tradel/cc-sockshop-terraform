@@ -1,0 +1,14 @@
+upstream port80 {
+    server localhost:8080;
+}
+
+server {
+    listen 80;
+    server_name _;
+
+    location / {
+        proxy_pass http://port80;
+        proxy_set_header Host $http_host;
+        proxy_http_version 1.1;
+    }
+}

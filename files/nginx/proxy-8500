@@ -1,0 +1,14 @@
+upstream port8500 {
+    server localhost:8501;
+}
+
+server {
+    listen 8500;
+    server_name _;
+
+    location / {
+        proxy_pass http://port8500;
+        proxy_set_header Host $http_host;
+        proxy_http_version 1.1;
+    }
+}

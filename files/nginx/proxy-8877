@@ -1,0 +1,14 @@
+upstream port8877 {
+    server localhost:8878;
+}
+
+server {
+    listen 8877;
+    server_name _;
+
+    location / {
+        proxy_pass http://port8877;
+        proxy_set_header Host $http_host;
+        proxy_http_version 1.1;
+    }
+}

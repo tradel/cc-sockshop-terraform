@@ -1,0 +1,10 @@
+# direnv variables
+.envrc 
+
+# GCE credentials
+sockshop*.json
+*-key.json
+
+# Terraform artifacts
+.terraform/
+terraform.tfstate*
