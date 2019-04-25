@@ -20,3 +20,8 @@ variable "machine_type" {
     default = "n1-standard-4"
     description = "Machine type to use."
 }
+
+variable "credentials" {
+    type = "string"
+    description = "Google service account credentials in JSON format"
+}

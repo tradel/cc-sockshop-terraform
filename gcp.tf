@@ -22,8 +22,14 @@ variable "machine_type" {
     description = "Machine type to use."
 }
 
+variable "credentials" {
+    type = "string"
+    description = "Google service account credentials in JSON format"
+}
+
 module "gcp" {
     source       = "./modules/sock-shop-gcp"
+    credentials  = "${var.credentials}"
     project_name = "${var.project_name}"
     region       = "${var.region}"
     zone         = "${var.zone}"

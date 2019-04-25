@@ -1,7 +1,8 @@
 provider "google" {
-  project = "${var.project_name}"
-  region  = "${var.region}"
-  version = "~> 2.3"
+  credentials = "${var.credentials}"
+  project     = "${var.project_name}"
+  region      = "${var.region}"
+  version     = "~> 2.3"
 }
 
 data "google_compute_image" "sockshop_image" {
