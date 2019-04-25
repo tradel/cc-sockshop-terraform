@@ -29,14 +29,14 @@ resource "google_compute_instance" "server" {
   }
 
   provisioner "file" {
-    source       = "${path.root}/run/start.sh"
-    destination  = "/tmp/start.sh"
+    source       = "${path.root}/run/start-dind.sh"
+    destination  = "/tmp/start-dind.sh"
   }
 
   provisioner "remote-exec" {
     inline = [
       "chmod 0755 /tmp/*.sh",
-      "sudo /tmp/start.sh"
+      "sudo /tmp/start-dind.sh"
     ]
   }
 }
