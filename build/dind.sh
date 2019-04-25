@@ -52,7 +52,7 @@ export DIND_K8S_VERSION=${K8S_VERSION}
 export SKIP_DASHBOARD=true 
 export SKIP_SNAPSHOT=true
 export NUM_NODES=3
-export CNI_PLUGIN=flannel
+export CNI_PLUGIN=weave
 
 curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
 curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
