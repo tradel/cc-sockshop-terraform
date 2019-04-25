@@ -17,18 +17,19 @@ apt-get install -y apt-transport-https ca-certificates curl gnupg2 \
     software-properties-common unzip git nginx supervisor
 
 # Install supervisord config to keep kubectl proxies running
+systemctl stop supervisor
+systemctl enable supervisor
 install -c -m 0755 /tmp/supervisord/*.sh /usr/local/bin
 install -c -m 0644 /tmp/supervisord/*.conf /etc/supervisor/conf.d
 
 # Set up nginx to reverse-proxy inbound traffic to Ambassador
+systemctl stop nginx 
+systemctl enable nginx 
 install -c -m 0644 /tmp/nginx/proxy-* /etc/nginx/sites-available
 rm /etc/nginx/sites-enabled/default
 ln -sf /etc/nginx/sites-available/proxy-8080 /etc/nginx/sites-enabled/proxy-8080
 ln -sf /etc/nginx/sites-available/proxy-8500 /etc/nginx/sites-enabled/proxy-8500
 ln -sf /etc/nginx/sites-available/proxy-8877 /etc/nginx/sites-enabled/proxy-8877
-
-systemctl enable nginx 
-systemctl enable supervisor
 
 #############################################################################
 # Install Consul binary
@@ -112,7 +113,7 @@ echo ""
 echo "Waiting for Tiller pod to start..."
 while [[ $( kubectl -n kube-system get pods -l app=helm,name=tiller -o jsonpath='{.items[0].status.containerStatuses[0].ready}' ) != "true" ]]
 do
-    sleep 5
+    sleep 1
 done
 
 #############################################################################
@@ -131,6 +132,8 @@ helm install --wait --name=consul consul/consul \
     --set global.image="consul:${CONSUL_VERSION}" \
     --set global.gossipEncryption.secretName=consul-gossip-key \
     --set global.gossipEncryption.secretKey=key \
+    --set server.replicas=1 \
+    --set server.bootstrapExpect=1 \
     --set server.storage=10Gi \
     --set client.grpc=true \
     --set ui.service.type=NodePort \
@@ -177,13 +180,13 @@ kubectl apply -f /tmp/kube/qotm.yaml
 echo "Waiting for Ambassador pod to start..."
 while [[ $( kubectl get pods -l service=ambassador -o jsonpath='{.items[0].status.containerStatuses[0].ready}' ) != "true" ]]
 do
-    sleep 5
+    sleep 1
 done
 
 echo "Waiting for Ambassador Connect pod to start..."
 while [[ $( kubectl get pods -l app=ambassador,component=consul-connect -o jsonpath='{.items[0].status.containerStatuses[0].ready}' ) != "true" ]]
 do
-    sleep 5
+    sleep 1
 done
 
 #############################################################################
@@ -200,8 +203,9 @@ kubectl create -f /tmp/kube/echo-client.yaml
 
 echo "Deploying Sock Shop..."
 helm install --wait --name=sockshop consul/microservices-demo \
+    --set zipkin.enabled=false \
     --set loadtest.enabled=true \
-    --set loadtest.replicas=2
+    --set loadtest.replicas=1
 kubectl apply -f /tmp/kube/weaveworks-service.yaml
 
 #############################################################################
