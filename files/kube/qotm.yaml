@@ -45,7 +45,7 @@ metadata:
       service: qotm-proxy
       resolver: consul-dc1
       tls: ambassador-consul
-      load_balancer:
+      load_balancer:  
         policy: round_robin
 spec:
   selector:

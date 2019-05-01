@@ -27,8 +27,8 @@ metadata:
         policy: round_robin
 spec:
   type: NodePort
-  selector:
-    name: front-end
+  externalTrafficPolicy: Local
   ports:
   - port: 80
-    name: http
+  selector:
+    name: front-end
